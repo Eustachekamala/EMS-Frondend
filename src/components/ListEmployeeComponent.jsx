@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useState } from "react";
-import { listEmployees } from "../services/EmployeeService";
+import { deleteEmployee, listEmployees } from "../services/EmployeeService";
 import { useNavigate } from "react-router";
 
 function ListEmployeeComponent() {
@@ -21,6 +21,22 @@ function ListEmployeeComponent() {
         navigator("/add-employee");
     }
 
+    function updateEmployee(id){
+        navigator(`/edit-employee/${id}`);
+    }
+
+    function handleDelete(id){
+        deleteEmployee(id)
+            .then(() => {
+                setEmployees((prevEmployees) => {
+                    prevEmployees.filter((emp) => emp.id !== id)
+                });
+            })
+            .catch((error) => {
+                console.log("Failled to delete employee:", error)
+            })
+    }
+
     return (
         <div className="p-6 bg-gray-100 min-h-screen">
             <h2 className="text-4xl font-bold text-center mb-6">List of Employees</h2>
@@ -37,7 +53,7 @@ function ListEmployeeComponent() {
                         </tr>
                     </thead>
                     <tbody>
-                        {employees.map((employee) => (
+                        {Array.isArray(employees) && employees.map((employee) => (
                             <tr key={employee.id} className="border-t hover:bg-gray-100">
                                 <td className="px-4 py-2">{employee.id}</td>
                                 <td className="px-4 py-2">{employee.firstname}</td>
@@ -51,10 +67,16 @@ function ListEmployeeComponent() {
                                     >
                                         Add Employee
                                     </button>
-                                    <button className="px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white font-semibold rounded-lg mr-2">
+                                    <button
+                                        onClick={() => updateEmployee(employee.id)} 
+                                        className="px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white font-semibold rounded-lg mr-2"
+                                    >
                                         Update
                                     </button>
-                                    <button className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-lg">
+                                    <button 
+                                        className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-lg"
+                                        onClick={() => handleDelete(employee.id)}
+                                    >
                                         Delete
                                     </button>
                                 </td>
