@@ -8,6 +8,10 @@ function ListEmployeeComponent() {
     const navigator = useNavigate();
 
     useEffect(() => {
+        getAllEmployees()
+    }, []);
+
+    function getAllEmployees(){
         listEmployees()
             .then((response) => {
                 setEmployees(response.data);
@@ -15,7 +19,7 @@ function ListEmployeeComponent() {
             .catch((error) => {
                 console.log(error);
             });
-    }, []);
+    }
 
     function addNewEmployee() {
         navigator("/add-employee");
@@ -25,12 +29,10 @@ function ListEmployeeComponent() {
         navigator(`/edit-employee/${id}`);
     }
 
-    function handleDelete(id){
+    function removeDelete(id){
         deleteEmployee(id)
             .then(() => {
-                setEmployees((prevEmployees) => {
-                    prevEmployees.filter((emp) => emp.id !== id)
-                });
+                getAllEmployees
             })
             .catch((error) => {
                 console.log("Failled to delete employee:", error)
@@ -75,7 +77,7 @@ function ListEmployeeComponent() {
                                     </button>
                                     <button 
                                         className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-lg"
-                                        onClick={() => handleDelete(employee.id)}
+                                        onClick={() => removeDelete(employee.id)}
                                     >
                                         Delete
                                     </button>
